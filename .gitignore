@@ -1,5 +1,7 @@
 # Local Data
 local_db/data/imgs/
+# Local settings
+local.settings.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
