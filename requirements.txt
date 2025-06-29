@@ -1,0 +1,9 @@
+psycopg2-binary>=2.9.10
+transformers>=4.52.4
+Pillow>=11.2.1
+torch>=2.7.1
+detoxify>=0.5.2
+protobuf>=6.31.0
+accelerate>=1.8.0
+azure-functions>=1.23.0
+torchvision>=0.22.1
