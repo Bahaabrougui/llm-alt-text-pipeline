@@ -1,29 +1,45 @@
-# app/utils.py
-import csv
 import os
+from datetime import datetime
+
+import psycopg2
 
 
-def save_output_csv(output: dict, file="outputs/alt_texts.csv"):
-    headers = ["image_path", "caption_en", "caption_fr", "caption_es",
-               "caption_de", "safe_en", "safe_fr", "safe_es", "safe_de"]
-    os.makedirs(os.path.dirname(file), exist_ok=True)
-
-    if not os.path.exists(file):
-        with open(file, "w", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow(headers)
-
-    with open(file, "a", newline="") as f:
-        writer = csv.writer(f)
-        row = [
-            output["image_path"],
-            output["captions"].get("en", ""),
-            output["captions"].get("fr", ""),
-            output["captions"].get("es", ""),
-            output["captions"].get("de", ""),
-            output["safety"]["en"]["is_safe"],
-            output["safety"]["fr"]["is_safe"],
-            output["safety"]["es"]["is_safe"],
-            output["safety"]["de"]["is_safe"],
-        ]
-        writer.writerow(row)
+def save_to_db(filename: str, result: dict):
+    conn = psycopg2.connect(
+        dbname="image_metadata",
+        user="dbadmin",
+        password="password123.",
+        host="my-postgres-server-9e7eb9.postgres.database.azure.com",
+        port=5432,
+        sslmode="require"
+    )
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT INTO product_images (
+        product_id, 
+        image_path, 
+        alt_en, 
+        alt_fr, 
+        alt_de,
+        safety_en,
+        safety_fr,
+        safety_de,
+        status, 
+        last_updated
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s);
+    """, (
+        os.path.splitext(os.path.basename(filename))[0],
+        filename,
+        result["captions"].get("en"),
+        result["captions"].get("fr"),
+        result["captions"].get("de"),
+        result["safety"].get("en"),
+        result["safety"].get("fr"),
+        result["safety"].get("de"),
+        "complete",
+        datetime.utcnow()
+    ))
+    conn.commit()
+    cur.close()
+    conn.close()
