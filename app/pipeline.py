@@ -1,4 +1,3 @@
-# app/pipeline.py
 from app.captioning import ImageCaptioner
 from app.translation import Translator
 from app.safety import AltTextSafetyChecker

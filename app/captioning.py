@@ -1,4 +1,3 @@
-# app/captioning.py
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 from PIL import Image
 import torch

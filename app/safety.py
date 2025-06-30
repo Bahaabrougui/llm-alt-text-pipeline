@@ -1,4 +1,3 @@
-# app/safety.py
 from detoxify import Detoxify
 import re
 
