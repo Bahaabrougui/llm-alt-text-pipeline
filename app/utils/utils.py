@@ -5,10 +5,22 @@ import time
 from datetime import datetime
 from typing import Optional, Any, Dict
 
+import numpy as np
 import psycopg2
 
 logger = logging.getLogger("llmops")
 logger.setLevel(logging.INFO)
+
+
+def safe_json(obj):
+    if isinstance(obj, (np.float32, np.float64)):
+        return float(obj)
+    if isinstance(obj, (np.int32, np.int64)):
+        return int(obj)
+    if isinstance(obj, np.bool_):
+        return bool(obj)
+    raise TypeError(
+        f"Object of type {obj.__class__.__name__} is not JSON serializable")
 
 
 def log_metrics(
@@ -18,7 +30,6 @@ def log_metrics(
         output_tokens: Optional[int] = None,
         latency: Optional[float] = None,
         cost_usd: Optional[float] = None,
-        safety_score: Optional[float] = None,
         **extra: Any,
 ):
     if latency is None:
@@ -33,11 +44,10 @@ def log_metrics(
         "input_tokens": input_tokens,
         "output_tokens": output_tokens,
         "cost_usd": round(cost_usd, 6) if cost_usd is not None else None,
-        "safety_score": safety_score,
     }
     metrics.update(extra)
     metrics = {k: v for k, v in metrics.items() if v is not None}
-    logger.info(f"[METRICS] {json.dumps(metrics)}")
+    logger.info(f"[METRICS] {json.dumps(metrics, default=safe_json)}")
 
 
 def save_to_db(filename: str, result: dict):
