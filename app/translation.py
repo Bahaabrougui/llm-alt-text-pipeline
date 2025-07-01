@@ -10,14 +10,17 @@ class Translator:
     def __init__(self, target_lang="fr"):
         self.target_lang = target_lang
         self.device = torch.device(
-            "mps" if torch.backends.mps.is_available() else "cpu"
+            "cuda" if torch.cuda.is_available() else "cpu"
         )
         model_name = f"Helsinki-NLP/opus-mt-en-{target_lang}"
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_name, use_fast=True
         )
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-        self.model = self.model.to(self.device)
+        self.model = AutoModelForSeq2SeqLM.from_pretrained(
+            model_name,
+            device_map="auto",
+            low_cpu_mem_usage=True,
+        )
 
     def translate(self, text: str) -> str:
         _start_ = time.time()

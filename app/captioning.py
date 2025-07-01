@@ -10,17 +10,18 @@ from app.utils.utils import log_metrics
 class ImageCaptioner:
     def __init__(self, model_name="Salesforce/blip2-opt-2.7b"):
         self.device = torch.device(
-            "mps" if torch.backends.mps.is_available() else "cpu"
+            "cuda" if torch.cuda.is_available else "cpu"
         )
-        self.processor = Blip2Processor.from_pretrained(model_name,
-                                                        use_fast=True)
+        self.processor = Blip2Processor.from_pretrained(
+            model_name,
+            use_fast=True,
+        )
         self.model = Blip2ForConditionalGeneration.from_pretrained(
             model_name,
             device_map="sequential",
             low_cpu_mem_usage=True,
             torch_dtype=torch.float16,
         )
-        self.model = self.model.to(self.device)
 
     def generate_caption(self, image_path: str, max_tokens=30) -> str:
         _start_ = time.time()
