@@ -9,9 +9,6 @@ from app.utils.utils import log_metrics
 
 class ImageCaptioner:
     def __init__(self, model_name="Salesforce/blip2-opt-2.7b"):
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available else "cpu"
-        )
         self.processor = Blip2Processor.from_pretrained(
             model_name,
             use_fast=True,
@@ -31,7 +28,11 @@ class ImageCaptioner:
                   "Be in the range of max_words=25 and min_words=3.")
         inputs = self.processor(
             image, prompt, return_tensors="pt"
-        ).to(self.device)
+        )
+        # Move inputs to model device (for accelerate offloading models)
+        device = next(self.model.parameters()).device
+        inputs = {k: v.to(device) for k, v in inputs.items()}
+
         with torch.no_grad():
             output = self.model.generate(**inputs, max_new_tokens=max_tokens)
             caption = self.processor.decode(

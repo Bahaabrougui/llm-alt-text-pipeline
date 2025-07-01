@@ -9,9 +9,6 @@ from app.utils.utils import log_metrics
 class Translator:
     def __init__(self, target_lang="fr"):
         self.target_lang = target_lang
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu"
-        )
         model_name = f"Helsinki-NLP/opus-mt-en-{target_lang}"
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_name, use_fast=True
@@ -24,11 +21,12 @@ class Translator:
 
     def translate(self, text: str) -> str:
         _start_ = time.time()
-        tokens = self.tokenizer(text, return_tensors="pt", padding=True).to(
-            self.device
-        )
+        inputs = self.tokenizer(text, return_tensors="pt", padding=True)
+        # Move inputs to model device (for accelerate offloading models)
+        device = next(self.model.parameters()).device
+        inputs = {k: v.to(device) for k, v in inputs.items()}
         with torch.no_grad():
-            translated = self.model.generate(**tokens)
+            translated = self.model.generate(**inputs)
 
         # Tokens count
         input_tokens = self.tokenizer(
