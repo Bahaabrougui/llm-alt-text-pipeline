@@ -10,6 +10,13 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 0.0.2 (2025-07-01)
+--------------------------
+
+* Changed: Captioning model inference optimization on low RAM/VRAM compute
+* Added: LLM related metrics logging
+
+
 Version 0.0.1 (2025-06-30)
 --------------------------
 
