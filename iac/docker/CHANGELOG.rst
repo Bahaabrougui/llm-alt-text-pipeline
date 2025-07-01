@@ -13,7 +13,7 @@ and this project adheres to `Semantic Versioning`_.
 Version 0.0.3 (2025-07-01)
 --------------------------
 
-* Changed: Use accelerate to move inputs to adequate device
+* Changed: Use accelerate on captioning and translation models
 * Added: Safe json logging
 
 
