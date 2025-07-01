@@ -1,7 +1,43 @@
+import json
+import logging
 import os
+import time
 from datetime import datetime
+from typing import Optional, Any, Dict
 
 import psycopg2
+
+logger = logging.getLogger("llmops")
+logger.setLevel(logging.INFO)
+
+
+def log_metrics(
+        component: str,
+        *,
+        input_tokens: Optional[int] = None,
+        output_tokens: Optional[int] = None,
+        latency: Optional[float] = None,
+        cost_usd: Optional[float] = None,
+        safety_score: Optional[float] = None,
+        **extra: Any,
+):
+    if latency is None:
+        # compute elapsed based on a passed _start_ key, if provided
+        latency = extra.pop("_start_", None)
+        if latency:
+            latency = round(time.time() - latency, 3)
+
+    metrics: Dict[str, Any] = {
+        "component": component,
+        "latency_s": latency,
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
+        "cost_usd": round(cost_usd, 6) if cost_usd is not None else None,
+        "safety_score": safety_score,
+    }
+    metrics.update(extra)
+    metrics = {k: v for k, v in metrics.items() if v is not None}
+    logger.info(f"[METRICS] {json.dumps(metrics)}")
 
 
 def save_to_db(filename: str, result: dict):
