@@ -10,6 +10,13 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 0.0.3 (2025-07-01)
+--------------------------
+
+* Changed: Use accelerate to move inputs to adequate device
+* Added: Safe json logging
+
+
 Version 0.0.2 (2025-07-01)
 --------------------------
 
