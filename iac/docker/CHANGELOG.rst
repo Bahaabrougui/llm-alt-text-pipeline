@@ -10,17 +10,14 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
-Version 0.0.3 (2025-07-01)
---------------------------
-
-* Changed: Use accelerate on captioning and translation models
-* Added: Safe json logging
-
-
-Version 0.0.2 (2025-07-01)
+Version 0.0.2 (2025-07-02)
 --------------------------
 
 * Changed: Captioning model inference optimization on low RAM/VRAM compute
+* Changed: Use accelerate on all models
+* Changed: Cache large models into disk during runtime
+* Changed: Load low-weight translation models into RAM
+* Added: Safe json logging
 * Added: LLM related metrics logging
 
 
