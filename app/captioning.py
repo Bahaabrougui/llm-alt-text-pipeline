@@ -2,22 +2,40 @@ import time
 
 import torch
 from PIL import Image
+from huggingface_hub import snapshot_download
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
+from accelerate import init_empty_weights, load_checkpoint_and_dispatch
 
 from app.utils.utils import log_metrics
 
 
 class ImageCaptioner:
     def __init__(self, model_name="Salesforce/blip2-opt-2.7b"):
+        # Download the model repo to a local folder (cached during image build)
+        local_model_path = snapshot_download(
+            model_name,
+            local_dir="/home/site/models_cache/blip2",
+            local_dir_use_symlinks=False,
+        )
+        # Init processor
         self.processor = Blip2Processor.from_pretrained(
             model_name,
             use_fast=True,
         )
-        self.model = Blip2ForConditionalGeneration.from_pretrained(
-            model_name,
+        # Init empty model on meta
+        with init_empty_weights():
+            model = Blip2ForConditionalGeneration.from_pretrained(
+                model_name,
+                torch_dtype=torch.float16
+            )
+        # Load weights and dispatch properly
+        self.model = load_checkpoint_and_dispatch(
+            model,
+            checkpoint=local_model_path,
             device_map="sequential",
-            low_cpu_mem_usage=True,
-            torch_dtype=torch.float16,
+            # required for disk/cpu fallback
+            offload_folder="/home/site/models_offload/blip2",
+            offload_state_dict=True,
         )
 
     def generate_caption(self, image_path: str, max_tokens=30) -> str:
