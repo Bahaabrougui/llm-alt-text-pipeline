@@ -40,13 +40,19 @@ class Translator:
         # Cost estimate: tokens × $0.0001
         cost = (input_tokens or 0 + output_tokens) * 1e-4
 
+        translated_text = self.tokenizer.decode(
+            translated[0], skip_special_tokens=True
+        )
+
         log_metrics(
             f"Helsinki-NLP",
             input_tokens=input_tokens,
             output_tokens=output_tokens,
             cost_usd=cost,
             _start_=_start_,
+            original_text=text,
+            translated_text=translated_text,
             target_lang=self.target_lang
         )
 
-        return self.tokenizer.decode(translated[0], skip_special_tokens=True)
+        return translated_text

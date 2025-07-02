@@ -37,6 +37,7 @@ class AltTextSafetyChecker:
             input_tokens=input_tokens,
             cost_usd=cost,
             _start_=_start_,
+            text=text,
             is_safe=not (is_toxic or is_too_short or is_too_long or has_profanity),
             toxicity=score["toxicity"],
         )
