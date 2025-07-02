@@ -15,16 +15,17 @@ class Translator:
         )
         self.model = AutoModelForSeq2SeqLM.from_pretrained(
             model_name,
-            device_map="auto",
-            low_cpu_mem_usage=True,
+            torch_dtype=torch.float32
         )
 
     def translate(self, text: str) -> str:
         _start_ = time.time()
         inputs = self.tokenizer(text, return_tensors="pt", padding=True)
-        # Move inputs to model device (for accelerate offloading models)
+
+        # Move inputs to model device
         device = next(self.model.parameters()).device
         inputs = {k: v.to(device) for k, v in inputs.items()}
+
         with torch.no_grad():
             translated = self.model.generate(**inputs)
 
