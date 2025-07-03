@@ -8,8 +8,12 @@ from typing import Optional, Any, Dict
 import numpy as np
 import psycopg2
 
-logger = logging.getLogger("llmops")
-logger.setLevel(logging.INFO)
+# Metrics logger
+llmops_logger = logging.getLogger("llmops")
+llmops_logger.setLevel(logging.INFO)
+# Info messages logger
+info_logger = logging.getLogger("Info")
+info_logger.setLevel(logging.INFO)
 
 
 def safe_json(obj):
@@ -21,6 +25,10 @@ def safe_json(obj):
         return bool(obj)
     raise TypeError(
         f"Object of type {obj.__class__.__name__} is not JSON serializable")
+
+
+def log_info_message(message: str):
+    info_logger.info(message)
 
 
 def log_metrics(
@@ -47,7 +55,7 @@ def log_metrics(
     }
     metrics.update(extra)
     metrics = {k: v for k, v in metrics.items() if v is not None}
-    logger.info(f"[METRICS] {json.dumps(metrics, default=safe_json)}")
+    llmops_logger.info(f"[METRICS] {json.dumps(metrics, default=safe_json)}")
 
 
 def save_to_db(filename: str, result: dict):
