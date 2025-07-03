@@ -1,7 +1,8 @@
+import logging
 import time
 
 import torch
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import AutoTokenizer, MarianMTModel
 
 from app.utils.utils import log_metrics
 
@@ -10,21 +11,25 @@ class Translator:
     def __init__(self, target_lang="fr"):
         self.target_lang = target_lang
         model_name = f"Helsinki-NLP/opus-mt-en-{target_lang}"
+        logging.info(f"✅ Initializing model: {model_name}")
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_name, use_fast=True
         )
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(
+        self.model = MarianMTModel.from_pretrained(
             model_name,
             torch_dtype=torch.float32
         )
 
     def translate(self, text: str) -> str:
+        # Assert text is str
+        assert isinstance(text, str), f"Expected str, got {type(text)}: {text}"
+        # Start inference
         _start_ = time.time()
-        inputs = self.tokenizer(text, return_tensors="pt", padding=True)
+        inputs = self.tokenizer([text], return_tensors="pt", padding=True)
 
         # Move inputs to model device
-        device = next(self.model.parameters()).device
-        inputs = {k: v.to(device) for k, v in inputs.items()}
+        # device = next(self.model.parameters()).device
+        # inputs = {k: v.to(device) for k, v in inputs.items()}
 
         with torch.no_grad():
             translated = self.model.generate(**inputs)
