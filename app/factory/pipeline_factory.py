@@ -1,7 +1,7 @@
-import logging
 import threading
 
 from app.pipeline import AltTextPipeline
+from app.utils.utils import log_info_message
 
 
 class PipelineFactory:
@@ -13,7 +13,9 @@ class PipelineFactory:
         if cls._pipeline is None:
             with cls._lock:
                 if cls._pipeline is None:
-                    logging.info("✅ Initializing pipeline and loading models")
+                    log_info_message(
+                        "✅ Initializing pipeline and loading models"
+                    )
                     cls._pipeline = AltTextPipeline()
-        logging.info("✅ Fetching already initialised pipeline and models")
+        log_info_message("✅ Fetching already initialised pipeline and models")
         return cls._pipeline
