@@ -1,17 +1,16 @@
-import logging
 import time
 
 import torch
 from transformers import AutoTokenizer, MarianMTModel
 
-from app.utils.utils import log_metrics
+from app.utils.utils import log_metrics, log_info_message
 
 
 class Translator:
     def __init__(self, target_lang="fr"):
         self.target_lang = target_lang
         model_name = f"Helsinki-NLP/opus-mt-en-{target_lang}"
-        logging.info(f"✅ Initializing model: {model_name}")
+        log_info_message(f"✅ Initializing model: {model_name}")
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_name, use_fast=True
         )
