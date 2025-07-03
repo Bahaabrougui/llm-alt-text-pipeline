@@ -15,4 +15,5 @@ class PipelineFactory:
                 if cls._pipeline is None:
                     logging.info("✅ Initializing pipeline and loading models")
                     cls._pipeline = AltTextPipeline()
+        logging.info("✅ Fetching already initialised pipeline and models")
         return cls._pipeline
