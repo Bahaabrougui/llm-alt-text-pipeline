@@ -1,0 +1,4 @@
+v1: "Describe the image for use as alt text in 1 sentence. "
+    "Be concise, informative, and neutral. "
+    "Be in the range of max_words=20 and min_words=3"
+v2: "Describe the image for use as alt text in 1 sentence"
