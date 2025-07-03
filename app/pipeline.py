@@ -1,3 +1,6 @@
+import logging
+import os
+
 from app.captioning import ImageCaptioner
 from app.translation import Translator
 from app.safety import AltTextSafetyChecker
@@ -10,6 +13,11 @@ class AltTextPipeline:
         self.safety = AltTextSafetyChecker()
 
     def process_image(self, image_path: str) -> dict:
+        # Log instance id
+        logging.info(
+            f"Azure Instance ID: {os.environ.get('WEBSITE_INSTANCE_ID')}"
+        )
+        # Prepare and start pipeline
         result = {
             "image_path": image_path,
             "captions": {},
