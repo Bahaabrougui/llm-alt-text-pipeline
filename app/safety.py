@@ -1,3 +1,4 @@
+import logging
 import time
 
 from detoxify import Detoxify
@@ -9,8 +10,9 @@ from app.utils.utils import log_metrics
 
 
 class AltTextSafetyChecker:
-    def __init__(self, max_words=25, min_words=3, toxicity_threshold=0.3):
+    def __init__(self, max_words=20, min_words=3, toxicity_threshold=0.3):
         self.detoxifier = Detoxify("original")
+        logging.info("✅ Initializing model: Detoxify")
         # Detoxify is a wrapper around bert-base-uncased
         self.tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
         self.max_words = max_words
