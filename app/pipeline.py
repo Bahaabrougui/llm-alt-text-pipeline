@@ -1,14 +1,14 @@
 import logging
 import os
 
-from app.captioning import ImageCaptioner
+from app.factory.image_captioner_factory import ImageCaptionerFactory
 from app.translation import Translator
 from app.safety import AltTextSafetyChecker
 
 
 class AltTextPipeline:
     def __init__(self, target_languages=["fr", "de"]):
-        self.captioner = ImageCaptioner()
+        self.image_captioner = ImageCaptionerFactory.get()
         self.translators = {lang: Translator(lang) for lang in target_languages}
         self.safety = AltTextSafetyChecker()
 
@@ -24,7 +24,7 @@ class AltTextPipeline:
             "safety": {}
         }
 
-        english_caption = self.captioner.generate_caption(image_path)
+        english_caption = self.image_captioner.generate_caption(image_path)
         result["captions"]["en"] = english_caption
 
         safety_check = self.safety.is_safe(english_caption)
