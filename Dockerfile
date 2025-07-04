@@ -11,10 +11,10 @@ RUN apt-get update && apt-get install -y git
 COPY . /home/site/wwwroot
 
 # Create model offload folder
-RUN rm -rf /home/site/models_cache/blip2  && mkdir -p /home/site/models_cache/blip2 && \
-    chmod -R 777 /home/site/models_cache/blip2
+RUN rm -rf /home/site/models_cache/blip-base  && mkdir -p /home/site/models_cache/blip-base && \
+    chmod -R 777 /home/site/models_cache/blip-base
 
 # Preload models during build
 RUN pip install -r /home/site/wwwroot/requirements.txt && \
-    python -c "from transformers import Blip2Processor; \
-               Blip2Processor.from_pretrained('Salesforce/blip2-opt-2.7b', use_fast=True, cache_dir='/home/site/models_cache/blip2');"
+    python -c "from transformers import BlipProcessor; \
+               BlipProcessor.from_pretrained('Salesforce/blip-image-captioning-base', use_fast=True, cache_dir='/home/site/models_cache/blip-base');"
