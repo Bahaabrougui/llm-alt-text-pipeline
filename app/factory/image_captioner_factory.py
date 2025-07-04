@@ -14,10 +14,10 @@ class ImageCaptionerFactory:
             with cls._lock:
                 if cls._image_captioner is None:
                     log_info_message(
-                        "✅ Initializing image captioning model"
+                        "✅ Initializing Image Captioning model"
                     )
                     cls._image_captioner = ImageCaptioner()
         log_info_message(
-            "✅ Fetching already initialised image captioning model"
+            "✅ Fetching already initialised Image Captioning model"
         )
         return cls._image_captioner
