@@ -7,3 +7,4 @@ protobuf>=6.31.0
 accelerate>=1.8.0
 azure-functions>=1.23.0
 torchvision>=0.22.1
+sentencepiece>=0.2.0,<1.0.0
