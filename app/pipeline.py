@@ -4,6 +4,7 @@ import os
 from app.factory.image_captioner_factory import ImageCaptionerFactory
 from app.translation import Translator
 from app.safety import AltTextSafetyChecker
+from app.utils.utils import safe_json
 
 
 class AltTextPipeline:
@@ -35,4 +36,4 @@ class AltTextPipeline:
             result["captions"][lang] = translated
             result["safety"][lang] = self.safety.is_safe(translated)
 
-        return result
+        return safe_json(result)
