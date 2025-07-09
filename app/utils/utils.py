@@ -92,7 +92,7 @@ def save_to_db(filename: str, result: dict):
             status,
             last_updated
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s);
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """, (
             os.path.splitext(os.path.basename(filename))[0],
             filename,
