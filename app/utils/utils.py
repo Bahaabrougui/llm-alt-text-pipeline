@@ -99,9 +99,9 @@ def save_to_db(filename: str, result: dict):
             result["captions"].get("en"),
             result["captions"].get("fr"),
             result["captions"].get("de"),
-            result["safety"].get("en"),
-            result["safety"].get("fr"),
-            result["safety"].get("de"),
+            json.dumps(result["safety"].get("en")),
+            json.dumps(result["safety"].get("fr")),
+            json.dumps(result["safety"].get("de")),
             "complete",
             datetime.utcnow()
         ))
