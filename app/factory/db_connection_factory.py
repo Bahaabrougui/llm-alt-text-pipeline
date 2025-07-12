@@ -35,7 +35,7 @@ class DBPool:
                         maxconn=10,
                         dbname=os.getenv("DB_NAME", "image_metadata"),
                         user=os.getenv("DB_USER", "dbadmin"),
-                        password=cls._get_secret("PostgresPassword"),
+                        password=cls._get_secret("db-password"),
                         host=os.getenv("DB_HOST"),
                         port=5432,
                         sslmode="require",
