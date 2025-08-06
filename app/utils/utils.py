@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Optional, Any, Dict
 
 import numpy as np
-import psycopg2
+
 
 from app.factory.db_connection_factory import DBPool
 
@@ -38,6 +38,10 @@ def safe_json(obj):
 
 def log_info_message(message: str):
     info_logger.info(message)
+
+
+def log_warning(message: str, extra: Any):
+    info_logger.warning(message, extra=extra)
 
 
 def log_metrics(
