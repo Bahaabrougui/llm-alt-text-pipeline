@@ -1,6 +1,6 @@
 import threading
 
-from app.captioning import ImageCaptioner
+from app.deprecated.captioning import ImageCaptioner
 from app.utils.utils import log_info_message
 
 
