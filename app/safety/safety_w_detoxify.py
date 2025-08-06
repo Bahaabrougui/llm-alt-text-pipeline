@@ -8,7 +8,7 @@ from transformers import BertTokenizer
 from app.utils.utils import log_metrics, log_info_message
 
 
-class AltTextSafetyChecker:
+class AltTextDetoxifySafetyChecker:
     def __init__(self, max_words=20, min_words=3, toxicity_threshold=0.3):
         self.detoxifier = Detoxify("original")
         log_info_message("✅ Initializing model: Detoxify")
