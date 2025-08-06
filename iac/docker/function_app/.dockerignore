@@ -1,0 +1,6 @@
+app/deprecated/
+app/api/
+local_db/
+iac/
+requirements/container_app_requirements.txt
+local.settings.json
