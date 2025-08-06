@@ -1,4 +1,3 @@
-import os
 import azure.functions as func
 from app.utils.globals import app
 from app.factory.pipeline_factory import PipelineFactory
@@ -12,12 +11,10 @@ from app.utils.utils import save_to_db, log_info_message
 )
 def main(myblob: func.InputStream):
     log_info_message(f"Processing blob: {myblob.name} ({myblob.length} bytes)")
-    local_path = f"/tmp/{os.path.basename(myblob.name)}"
-    with open(local_path, "wb") as fp:
-        fp.write(myblob.read())
-
     pipe = PipelineFactory.get()
-    result = pipe.process_image(local_path)
+    extension = myblob.name.split('.')[-1].lower()
+    files = {"file": (myblob.name, myblob.read(), f"image/{extension}")}
+    result = pipe.process_image(files=files)
     log_info_message(
         f"Result: {result['captions']} | Safety: {result['safety']}"
     )
