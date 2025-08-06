@@ -4,27 +4,18 @@ Changelog
 All notable changes to this project will be documented in this file.
 
 Each version refers to a tag of the corresponding docker image
-`psiacr/alttext-func`.
+`psiacr/blip-serve`.
 
 The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
-Version 0.0.2 (2025-07-02)
---------------------------
-
-* Changed: Captioning model inference optimization on low RAM/VRAM compute
-* Changed: Use accelerate on all models
-* Changed: Cache large models into disk during runtime
-* Changed: Load low-weight translation models into RAM
-* Added: Safe json logging
-* Added: LLM related metrics logging
-
-
-Version 0.0.1 (2025-06-30)
+Version 0.0.1 (2025-08-06)
 --------------------------
 
 * Added: initial release
+    * Exposes Blip2 2.7B with FastAPI
+    * Process one-image per POST request
 
 
 .. _Keep a Changelog:
