@@ -15,4 +15,4 @@ RUN pip install -r /home/app/requirements/container_app_requirements.txt && \
     python -c "from transformers import Blip2Processor; \
                Blip2Processor.from_pretrained('Salesforce/blip2-opt-2.7b', use_fast=True, cache_dir='/home/app/models_cache/blip2');"
 
-CMD ["gunicorn", "app.api.captioning.captioner:app", "-k", "uvicorn.workers.UvicornWorker", "--host", "0.0.0.0", "--port", "80", "--workers", "4"]
+CMD ["gunicorn", "app.api.captioning.captioner:app", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:80", "--workers", "4"]
