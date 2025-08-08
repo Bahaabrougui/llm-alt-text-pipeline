@@ -39,15 +39,15 @@ class AltTextOpenAISafetyChecker:
 
     def call_az_open_ai_api_with_message(
             self,
-            messages: Iterable[Dict[str, str]],
+            prompt: str,
             model: str,
             max_tokens=50,
             temperature=0,
     ) -> Tuple[str, Dict[str, int]]:
         """Calls azure openAI API."""
-        response = self.client.chat.completions.create(
+        response = self.client.completions.create(
             model=model,
-            messages=messages,
+            prompt=prompt,
             max_tokens=max_tokens,
             temperature=temperature,
         )
@@ -61,10 +61,10 @@ class AltTextOpenAISafetyChecker:
         _start_ = time.time()
         safety_model_response, safety_model_usage = self.call_az_open_ai_api_with_message(
             model=os.environ["AZURE_OPENAI_DEPLOYMENT_NAME"],
-            messages=[
-                {"role": "system", "content": self._system_prompt},
-                {"role": "user", "content": self._user_prompt},
-            ]
+            prompt=f"{self._system_prompt.strip()}\n\n"
+                   f"User: {self._user_prompt.strip()}\n"
+                   f"Moderator:"
+
         )
         try:
             safety_json = json.loads(safety_model_response)
