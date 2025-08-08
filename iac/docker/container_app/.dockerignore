@@ -1,10 +1,11 @@
+app/api/tests/
 app/deprecated/
-app/factory/
 app/handlers/
 app/health_check/
 app/safety/
 app/translation/
 app/utils/globals.py
+app/pipeline.py
 iac/
 local_db/
 requirements/fapp_requirements.txt

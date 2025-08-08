@@ -9,7 +9,7 @@ from openai import AzureOpenAI
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 from app.define import AZURE_COGNITIVE_SERVICES_SCOPE, \
-    OUTPUT_PRICE_PER_1_K, INPUT_PRICE_PER_1_K
+    OUTPUT_PRICE_PER_1_K, INPUT_PRICE_PER_1_K, APPLICATION_PATH_FUNCTION_APP
 from app.utils.utils import log_metrics, log_warning
 
 
@@ -26,7 +26,9 @@ class AltTextOpenAISafetyChecker:
         )
         self._toxicity_threshold = toxicity_threshold
         # Load prompts
-        with open("prompts/gpt.yaml", "r") as gpt_prompt_file:
+        with open(os.path.join(
+                APPLICATION_PATH_FUNCTION_APP, "prompts/gpt.yaml"
+        ), "r") as gpt_prompt_file:
             gpt_prompt_file_content = yaml.safe_load(gpt_prompt_file)
             self._system_prompt = gpt_prompt_file_content["gpt"]["system"][
                 os.environ["GPT_PROMPT_VERSION"]

@@ -8,8 +8,8 @@ from fastapi import FastAPI, UploadFile, File, Query
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 
 from app.define import CAPTIONING_MODEL_NAME, MODEL_CACHE_DIR, \
-    CAPTIONING_MODEL_ROUTE
-from app.utils.utils import log_metrics
+    CAPTIONING_MODEL_ROUTE, APPLICATION_PATH_CONTAINER_APP
+from app.utils.utils import log_metrics, log_info_message
 
 app = FastAPI()
 
@@ -18,22 +18,30 @@ if torch.cuda.is_available():
 else:
     raise RuntimeError("GPU not supported, check your configuration.")
 
-# Load prompts
-with open("prompts/blip.yaml", "r") as blip_prompt_file:
-    blip_prompt_file_content = yaml.safe_load(blip_prompt_file)
-    _prompt = blip_prompt_file_content["blip"][os.environ["BLIP_PROMPT_VERSION"]]
 
-processor = Blip2Processor.from_pretrained(
-    CAPTIONING_MODEL_NAME,
-    use_fast=True,
-    cache_dir=MODEL_CACHE_DIR,
-)
-model = Blip2ForConditionalGeneration.from_pretrained(
-    CAPTIONING_MODEL_NAME,
-    torch_dtype=torch.float16,
-    device_map="auto",
-    cache_dir=MODEL_CACHE_DIR,
-).to(device)
+@app.on_event("startup")
+def load_model():
+    # Load prompts
+    with open(os.path.join(
+            APPLICATION_PATH_CONTAINER_APP, "prompts/blip.yaml"
+    ), "r") as blip_prompt_file:
+        blip_prompt_file_content = yaml.safe_load(blip_prompt_file)
+        app.state._prompt = blip_prompt_file_content["blip"][os.environ["BLIP_PROMPT_VERSION"]]
+
+    log_info_message("Loading model..")
+    app.state.processor = Blip2Processor.from_pretrained(
+        CAPTIONING_MODEL_NAME,
+        use_fast=True,
+        cache_dir=MODEL_CACHE_DIR,
+    )
+    app.state.model = Blip2ForConditionalGeneration.from_pretrained(
+        CAPTIONING_MODEL_NAME,
+        torch_dtype=torch.float16,
+        device_map="auto",
+        cache_dir=MODEL_CACHE_DIR,
+    ).to(device)
+
+    log_info_message("Model loaded.")
 
 
 @app.post(CAPTIONING_MODEL_ROUTE)
@@ -42,16 +50,21 @@ async def caption_image(
         max_tokens: int = Query(100),
 ):
     _start_ = time.time()
+    # Get state variables
+    model = app.state.model
+    processor = app.state.processor
+    _prompt = app.state._prompt
     image = Image.open(file.file).convert("RGB")
     inputs = processor(
         images=image,
         text=_prompt,
         return_tensors="pt",
     ).to(device)
-    output = model.generate(
-        **inputs,
-        max_new_tokens=max_tokens,
-    )
+    with torch.no_grad():
+        output = model.generate(
+            **inputs,
+            max_new_tokens=max_tokens,
+        )
     caption = processor.decode(
         output[0],
         skip_special_tokens=True,
@@ -74,6 +87,7 @@ async def caption_image(
     return {"caption": caption}
 
 
-@app.post("/health")
+@app.get("/health")
 async def health_check():
+    log_info_message("Health check initiated..")
     return {"status": "ok"}

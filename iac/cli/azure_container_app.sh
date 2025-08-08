@@ -26,6 +26,6 @@ az containerapp create \
   --user-assigned "$MI_ID" \
   --registry-server $ACR_SERVER \
   --registry-identity "$MI_ID" \
-  --env-vars BLIP_PROMPT_VERSION=v1
+  --env-vars BLIP_PROMPT_VERSION=v2
 
 

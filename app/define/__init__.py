@@ -11,5 +11,9 @@ OUTPUT_PRICE_PER_1_K = {
 
 # Captioning model
 CAPTIONING_MODEL_NAME = "Salesforce/blip2-opt-2.7b"
-MODEL_CACHE_DIR = "./models_cache/blip2"
+MODEL_CACHE_DIR = "/home/fastapi_app/models_cache/blip2"
 CAPTIONING_MODEL_ROUTE = "/api/caption"
+
+# Application path to avoid relative paths
+APPLICATION_PATH_CONTAINER_APP = "/home/fastapi_app/app"
+APPLICATION_PATH_FUNCTION_APP = "/home/site/wwwroot/app"
