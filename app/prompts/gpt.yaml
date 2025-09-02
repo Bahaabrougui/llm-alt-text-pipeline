@@ -5,7 +5,7 @@ gpt:
     v1: >
       Mark as unsafe if the caption contains profanity, hate, 
       sexual content, or seems toxic (> 0.5). Also unsafe if <4 or >25 words.
-      Respond in JSON format like this:
+      Respond only with valid JSON, no extra text, like this:
         {
           "is_safe": true,
           "toxicity": 0.01,
