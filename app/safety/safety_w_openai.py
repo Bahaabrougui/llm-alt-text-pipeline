@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import time
 
 import yaml
@@ -52,7 +53,7 @@ class AltTextOpenAISafetyChecker:
             temperature=temperature,
         )
         # Extract actual response and usage
-        text_response, usage = (response.choices[0].message.content.strip(),
+        text_response, usage = (response.choices[0].text.strip(),
                                 cast(Dict[str, int], response.usage.to_dict()))
 
         return text_response, usage
@@ -67,7 +68,8 @@ class AltTextOpenAISafetyChecker:
 
         )
         try:
-            safety_json = json.loads(safety_model_response)
+            safety_model_response_fixed = re.search(r"\{.*\}", safety_model_response, re.S).group(0)
+            safety_json = json.loads(safety_model_response_fixed)
         except Exception:
             log_warning(
                 f"Could not parse {os.environ['AZURE_OPENAI_DEPLOYMENT_NAME']} response",
@@ -82,7 +84,7 @@ class AltTextOpenAISafetyChecker:
             }
 
         # Cost estimate
-        prompt_tokens = safety_model_usage["input_tokens"]
+        prompt_tokens = safety_model_usage["prompt_tokens"]
         completion_tokens = safety_model_usage["completion_tokens"]
         cost = (prompt_tokens *
                 INPUT_PRICE_PER_1_K[os.environ["AZURE_OPENAI_DEPLOYMENT_NAME"]] +
